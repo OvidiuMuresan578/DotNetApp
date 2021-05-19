@@ -41,17 +41,21 @@ namespace WpfApp3
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-             var res = String.Empty;
-             SearchResult result = BingNewsSearch(KeyWordText.Text);
-             var jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject<Root>(result.jsonResult);
-
+            var res = String.Empty;
+            SearchResult result = BingNewsSearch(KeyWordText.Text);
+            var jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject<Root>(result.jsonResult);
+            //save file dialog wpf
 
             WriteToFile(JsonConvert.SerializeObject(jsonObj));
 
             Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(ReadFromFile());
 
             DisplayPage dp = new DisplayPage();
-            dp.DisplayData.Text = myDeserializedClass.value[0].name;// we need to proces data from classes in order to display it
+             
+            foreach(var i in myDeserializedClass.value)
+            {
+                dp.DisplayData.Text += i.ToString();
+            }
             dp.Show();
 
         }
@@ -173,6 +177,13 @@ namespace WpfApp3
             public List<Provider> provider { get; set; }
             public DateTime datePublished { get; set; }
             public List<About> about { get; set; }
+
+            public override string ToString()
+            {
+                return $"Title: {this.name}\n\n"+
+                       $"Description: {this.description}\n\n" +
+                       $"DateTime: {this.datePublished.ToString()}\n\n";
+            }
         }
 
         public class Root
